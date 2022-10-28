@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.webmvc.board.repository.BoardRepository">
+
+    <!-- sql과 java의 이름관례 차이에서 오는 매핑을 맞춰주는 것 -->
+    <!-- id=내맘데로 -->
+    <resultMap id="boardMap" type="com.spring.webmvc.board.domain.Board">
+        <!-- 여기서 똑같은건 안해줘도 됨 -->
+        <id property="boardNo" column="board_no"/>
+        <result property="viewCnt" column="view_cnt"/>
+        <result property="regDate" column="reg_date"/>
+    </resultMap>
+
+    <!-- mybatis3버전부턴 resultType이나 parameterType 생략 가능하지만
+            findOne은 우리가 만든 Board를 쓰니까 얘가 추론못함, 내가 써줘야함 -->
+
+    <select id="findAll" resultMap="boardMap">
+        <!--  실무에서는 * 쓰지 말고 전부 입력해줘야함      -->
+        select * from tbl_board order by board_no desc
+    </select>
+
+    <!--  기본타입은 매개변수 그대로 씀    -->
+    <!--  이렇게 resultType을 하면 (resultType="com.spring.webmvc.board.domain.Board")
+            sql로 만든 이름이랑 멤버변수에 있는 변수 명이 완전히 일치해야함  -->
+    <select id="findOne" resultMap="boardMap">
+        select * from tbl_board where board_no=#{boardNo}
+    </select>
+
+    <!--  #{}안에 있는것들은 직접접근한게 아니라 #{getWriter()} 인거임  -->
+    <insert id="save">
+        insert into tbl_board (writer, title, content) values (#{writer},#{title},#{content})
+    </insert>
+
+    <delete id="remove">
+        delete from tbl_board where board_no=#{boardNo}
+    </delete>
+
+    <update id="modify">
+        update tbl_board set title=#{title}, content=#{content} where board_no=#{boardNo}
+    </update>
+<!-- 이렇게 다 하고나면 테스트를 해줘야함, 나중에 하면 어디서 에러가났는지 찾기힘듬-->
+<!-- 인터페이스 가서 컨트롤 쉬프트 t 해서 테스트 ㄱㄱ -->
+</mapper>
